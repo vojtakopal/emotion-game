@@ -34,14 +34,10 @@ const startWebcam = ({ video, canvas }) => navigator.mediaDevices.getUserMedia({
     console.log("An error occured!" + err);
 });
 
-const getSnapshot = ({ video, canvas, image }) => {
+const getSnapshot = ({ video, canvas }) => {
     const context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, canvas.width,  canvas.height);
-
-    const data = canvas.toDataURL('image/png');
-    image.setAttribute('src', data);
-
-    return data;
+    return canvas.toDataURL('image/png');
 };
 
 const uploadToStorage = base64EncodedImage => {
@@ -95,7 +91,7 @@ const signIn = () => firebase.auth().signInAnonymously();
                     const countDown = secondsBetweenSnaps - timeCounter - 1;
                     $counter.text(countDown || 'Snap!');
                     if (timeCounter === 0) {
-                        const base64EncodedImage = getSnapshot({ video, canvas, image });
+                        const base64EncodedImage = getSnapshot({ video, canvas });
                         uploadToStorage(base64EncodedImage);
                     }
                 }, 1000);
