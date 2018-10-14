@@ -11,6 +11,11 @@ const valuesToKeys = (defaultValue, values) => values.reduce(( obj, type ) => ({
 const uuidv4 = () => ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 );
+const to2D = val => (val < 10) ? `0${val}` : val;
+const getDateTimeString = () => {
+    const d = new Date();
+    return `${d.getFullYear()}${to2D(d.getMonth()+1)}${to2D(d.getDate())}${to2D(d.getHours())}${to2D(d.getMinutes())}`;
+}
 
 const startWebcam = ({ video, canvas }) => navigator.mediaDevices.getUserMedia({
     video: true,
@@ -43,7 +48,7 @@ const getSnapshot = ({ video, canvas }) => {
 const uploadToStorage = base64EncodedImage => {
     const storageRef = firebase.storage().ref();
     return storageRef
-        .child('images/' + uuidv4() + '.png')
+        .child(`images/${getDateTimeString()}/${uuidv4()}.png`)
         .putString(base64EncodedImage, 'data_url')
         .then(snapshot => {
             const { metadata } = snapshot;
